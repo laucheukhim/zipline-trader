@@ -135,8 +135,10 @@ def _run(handle_data,
     )
 
     emission_rate = 'daily'
+    arena = 'backtest'
     if broker:
         emission_rate = 'minute'
+        arena = 'live'
         # if we run zipline as a command line tool, these will probably not be initiated
         if not start:
             start = pd.Timestamp.utcnow()
@@ -248,7 +250,8 @@ def _run(handle_data,
             capital_base=capital_base,
             emission_rate=emission_rate,
             data_frequency=data_frequency,
-            execution_id=execution_id
+            execution_id=execution_id,
+            arena=arena,
         ),
         metrics_set=metrics_set,
         blotter=blotter,

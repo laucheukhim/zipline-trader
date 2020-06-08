@@ -34,7 +34,8 @@ def create_simulation_parameters(year=2006,
                                  num_days=None,
                                  data_frequency='daily',
                                  emission_rate='daily',
-                                 trading_calendar=None):
+                                 trading_calendar=None,
+                                 arena='backtest'):
 
     if not trading_calendar:
         trading_calendar = get_calendar("NYSE")
@@ -60,6 +61,7 @@ def create_simulation_parameters(year=2006,
         data_frequency=data_frequency,
         emission_rate=emission_rate,
         trading_calendar=trading_calendar,
+        arena=arena,
     )
 
     return sim_params
