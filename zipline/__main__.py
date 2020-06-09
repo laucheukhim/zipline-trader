@@ -347,8 +347,10 @@ def run(ctx,
             ctx.fail("unsupported broker: can't import class %s from %s" %
                      (cl_name, mod_name))
         brokerobj = bclass(broker_uri)
+    if start is None:
+        start = pd.Timestamp.utcnow()
     if end is None:
-            end = pd.Timestamp.utcnow() + pd.Timedelta(days=1, seconds=1)  # Add 1-second to assure that end is > 1day
+        end = pd.Timestamp.utcnow() + pd.Timedelta(days=1, seconds=1)  # Add 1-second to assure that end is > 1day
 
     if (algotext is not None) == (algofile is not None):
         ctx.fail(
