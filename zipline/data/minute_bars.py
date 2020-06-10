@@ -1199,7 +1199,7 @@ class BcolzMinuteBarReader(MinuteBarReader):
             self._minutes_per_day
         )
 
-        return pd.Timestamp(minute_epoch, tz='UTC', unit="m")
+        return pd.Timestamp(minute_epoch, tz=self.calendar.tz, unit="m")
 
     def _find_position_of_minute(self, minute_dt):
         """

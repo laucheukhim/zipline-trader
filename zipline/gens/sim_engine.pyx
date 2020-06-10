@@ -31,6 +31,7 @@ cpdef enum:
 
 cdef class MinuteSimulationClock:
     cdef bool minute_emission
+    cdef tz
     cdef np.int64_t[:] market_opens_nanos, market_closes_nanos, bts_nanos, \
         sessions_nanos
     cdef dict minutes_by_session
@@ -40,8 +41,10 @@ cdef class MinuteSimulationClock:
                  market_opens,
                  market_closes,
                  before_trading_start_minutes,
-                 minute_emission=False):
+                 minute_emission=False,
+                 tz='UTC'):
         self.minute_emission = minute_emission
+        self.tz = tz
 
         self.market_opens_nanos = market_opens.values.astype(np.int64)
         self.market_closes_nanos = market_closes.values.astype(np.int64)
@@ -67,16 +70,16 @@ cdef class MinuteSimulationClock:
             )
             minutes_by_session[session_nano] = pd.to_datetime(
                 minutes_nanos, utc=True, box=True
-            )
+            ).tz_convert(self.tz)
         return minutes_by_session
 
     def __iter__(self):
         minute_emission = self.minute_emission
 
         for idx, session_nano in enumerate(self.sessions_nanos):
-            yield pd.Timestamp(session_nano, tz='UTC'), SESSION_START
+            yield pd.Timestamp(session_nano, tz=self.tz), SESSION_START
 
-            bts_minute = pd.Timestamp(self.bts_nanos[idx], tz='UTC')
+            bts_minute = pd.Timestamp(self.bts_nanos[idx], tz=self.tz)
             regular_minutes = self.minutes_by_session[session_nano]
 
             if bts_minute > regular_minutes[-1]:
