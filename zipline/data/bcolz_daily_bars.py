@@ -295,12 +295,12 @@ class BcolzDailyBarWriter(object):
             last_row[asset_key] = total_rows + nrows - 1
             total_rows += nrows
 
-            table_day_to_session = compose(
-                self._calendar.minute_to_session_label,
-                partial(Timestamp, unit='s', tz='UTC'),
-            )
-            asset_first_day = table_day_to_session(table['day'][0])
-            asset_last_day = table_day_to_session(table['day'][-1])
+            days = self._calendar.schedule[
+               to_datetime(table['day'][0], unit='s', utc=True):
+               to_datetime(table['day'][-1], unit='s', utc=True)
+            ].index
+            asset_first_day = days[0]
+            asset_last_day = days[-1]
 
             asset_sessions = sessions[
                 sessions.slice_indexer(asset_first_day, asset_last_day)
