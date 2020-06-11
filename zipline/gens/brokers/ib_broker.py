@@ -216,11 +216,11 @@ class TWSConnection(EClientSocket, EWrapper):
         # however, be requested with realtimeBars. This change will make
         # sure we can request data from INDEX tickers like SPX, VIX, etc.
         if contract.m_secType == 'IND':
-            self.reqRealTimeBars(ticker_id, contract, 60, 'TRADES', True)
+            self.reqRealTimeBars(ticker_id, contract, 60, 'TRADES', False)
         else:
             tick_list = "233"  # RTVolume, return tick_type == 48
+            self.reqHistoricalData(ticker_id, contract, '', '60 S', '1 secs', 'TRADES', False, 2)
             self.reqMktData(ticker_id, contract, tick_list, False)
-            sleep(11)
 
     def _process_tick(self, ticker_id, tick_type, value):
         try:
@@ -460,7 +460,10 @@ class TWSConnection(EClientSocket, EWrapper):
 
     def historicalData(self, req_id, date, open_, high, low, close, volume,
                        count, wap, has_gaps):
-        log_message('historicalData', vars())
+        if close != -1:
+            value = (";".join([str(close), str(count), str(int(date) * 1000), str(volume),
+                               str(wap), "false"]))
+            self._process_tick(req_id, tick_type=48, value=value)
 
     def scannerParameters(self, xml):
         log_message('scannerParameters', vars())
