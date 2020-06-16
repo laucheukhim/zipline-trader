@@ -222,6 +222,14 @@ class TWSConnection(EClientSocket, EWrapper):
             self.reqHistoricalData(ticker_id, contract, '', '60 S', '1 secs', 'TRADES', False, 2)
             self.reqMktData(ticker_id, contract, tick_list, False)
 
+    def unsubscribe_from_market_data(self):
+        for symbol, ticker_id in self.symbol_to_ticker_id.items():
+            if symbol_to_sec_type[symbol] == 'IND':
+                self.cancelRealTimeBars(ticker_id)
+            else:
+                self.cancelMktData(ticker_id)
+            self.symbol_to_ticker_id.pop(symbol, None)
+
     def _process_tick(self, ticker_id, tick_type, value):
         try:
             symbol = self.ticker_id_to_symbol[ticker_id]
@@ -1032,3 +1040,7 @@ class IBBroker(Broker):
             df = pd.concat([df, ohlcv], axis=1)
 
         return df
+
+    def teardown(self):
+        # IB TWS restarts every day. If there are any active subscriptions when TWS restarts, the algorithm crashes.
+        self._tws.unsubscribe_from_market_data()

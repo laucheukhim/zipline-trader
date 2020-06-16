@@ -216,6 +216,8 @@ class AlgorithmSimulator(object):
                     execute_order_cancellation_policy()
                     algo.validate_account_controls()
 
+                    algo.after_trading_end(self.current_data)
+
                     yield self._get_daily_message(dt, algo, metrics_tracker)
                 elif action == BEFORE_TRADING_START_BAR:
                     self.simulation_dt = dt

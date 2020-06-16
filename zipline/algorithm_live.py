@@ -94,12 +94,21 @@ class LiveTradingAlgorithm(TradingAlgorithm):
                           checksum=self.algo_filename,
                           exclude_list=self._context_persistence_excludes)
 
+    def before_trading_start(self, data):
+        # we are live, we need to update our portfolio from the broker before we start
+        self.broker._get_positions_from_broker()
+        super(self.__class__, self).before_trading_start(data)
+
     def handle_data(self, data):
         super(self.__class__, self).handle_data(data)
         store_context(self.state_filename,
                       context=self,
                       checksum=self.algo_filename,
                       exclude_list=self._context_persistence_excludes)
+
+    def after_trading_end(self, data):
+        super(self.__class__, self).after_trading_end(data)
+        self.broker.teardown()
 
     def teardown(self):
         super(self.__class__, self).teardown()

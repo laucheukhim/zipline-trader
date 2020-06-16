@@ -78,3 +78,7 @@ class Broker(object):
     @abstractmethod
     def get_realtime_bars(self, assets, frequency):
         pass
+
+    @abstractmethod
+    def teardown(self):
+        pass
