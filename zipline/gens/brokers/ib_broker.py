@@ -223,7 +223,7 @@ class TWSConnection(EClientSocket, EWrapper):
             self.reqMktData(ticker_id, contract, tick_list, False)
 
     def unsubscribe_from_market_data(self):
-        for symbol, ticker_id in self.symbol_to_ticker_id.items():
+        for symbol, ticker_id in self.symbol_to_ticker_id.copy().items():
             if symbol_to_sec_type[symbol] == 'IND':
                 self.cancelRealTimeBars(ticker_id)
             else:
