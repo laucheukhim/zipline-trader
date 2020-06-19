@@ -15,7 +15,7 @@
 from collections import Iterable, namedtuple
 from copy import copy
 import warnings
-from datetime import tzinfo, time, timedelta
+from datetime import tzinfo, datetime, date, timedelta
 import logbook
 import pytz
 import pandas as pd
@@ -539,8 +539,8 @@ class TradingAlgorithm(object):
         # FIXME generalize these values
         before_trading_start_minutes = days_at_time(
             self.sim_params.sessions,
-            time(8, 45),
-            "US/Eastern"
+            (datetime.combine(date.today(), self.trading_calendar.open_times[0][1]) - timedelta(minutes=46)).time(),
+            self.trading_calendar.tz.zone
         )
 
         return MinuteSimulationClock(
