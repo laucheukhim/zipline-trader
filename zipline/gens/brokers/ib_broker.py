@@ -161,6 +161,9 @@ class TWSConnection(EClientSocket, EWrapper):
 
         log.info("Local-Broker Time Skew: {}".format(self.time_skew))
 
+    def disconnect(self):
+        self.eDisconnect()
+
     def _download_account_details(self):
         exec_filter = ExecutionFilter()
         exec_filter.m_clientId = self.client_id
@@ -539,6 +542,10 @@ class IBBroker(Broker):
         self._subscribed_assets = []
 
         super(self.__class__, self).__init__()
+
+    def init(self):
+        if not self._tws.isConnected():
+            self._tws.connect()
 
     @property
     def subscribed_assets(self):
@@ -1044,3 +1051,4 @@ class IBBroker(Broker):
     def teardown(self):
         # IB TWS restarts every day. If there are any active subscriptions when TWS restarts, the algorithm crashes.
         self._tws.unsubscribe_from_market_data()
+        self._tws.disconnect()

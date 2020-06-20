@@ -95,6 +95,7 @@ class LiveTradingAlgorithm(TradingAlgorithm):
                           exclude_list=self._context_persistence_excludes)
 
     def before_trading_start(self, data):
+        self.broker.init()
         # we are live, we need to update our portfolio from the broker before we start
         self.broker._get_positions_from_broker()
         super(self.__class__, self).before_trading_start(data)
