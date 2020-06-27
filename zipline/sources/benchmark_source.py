@@ -62,7 +62,7 @@ class BenchmarkSource(object):
                 minute_series = daily_series.reindex(
                     index=minutes,
                     method="ffill"
-                )
+                ).tz_convert(trading_calendar.tz)
 
                 self._precalculated_series = minute_series
             else:
