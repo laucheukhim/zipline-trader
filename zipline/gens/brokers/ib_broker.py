@@ -16,6 +16,9 @@ from collections import namedtuple, defaultdict, OrderedDict
 from time import sleep
 from math import fabs
 
+import datetime
+import pytz
+
 from six import iteritems, itervalues
 import polling
 import pandas as pd
@@ -538,6 +541,7 @@ class IBBroker(Broker):
         self.account_id = (self._tws.managed_accounts[0] if account_id is None
                            else account_id)
         self.currency = 'USD'
+        self.timezone = 'US/Eastern'
 
         self._subscribed_assets = []
 
@@ -787,7 +791,7 @@ class IBBroker(Broker):
 
     def _ib_to_zp_order_id(self, ib_order_id):
         return "IB-{date}-{account_id}-{client_id}-{order_id}".format(
-            date=str(pd.to_datetime('today').date()),
+            date=str(datetime.datetime.now(pytz.timezone(self.timezone)).date()),
             account_id=self.account_id,
             client_id=self._tws.client_id,
             order_id=ib_order_id)
